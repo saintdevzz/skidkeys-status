@@ -1,0 +1,61 @@
+name: update-isaeva
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch Isaeva status
+        shell: bash
+        run: |
+          set -o pipefail
+          URL="https://isaeva.xyz/api/roblox/isaeva"
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+          ENCODED=$(jq -rn --arg url "$URL" '$url|@uri')
+
+          fetch_url() {
+            curl -sfL --max-time 15 -H "Accept: application/json" -H "User-Agent: $UA" "$1" -o tmp.json || return 1
+            if jq -e '.success == true' tmp.json >/dev/null 2>&1; then
+              return 0
+            fi
+            if jq -e '.data.content' tmp.json >/dev/null 2>&1; then
+              jq -r '.data.content' tmp.json > content.json
+              if jq -e '.success == true' content.json >/dev/null 2>&1; then
+                mv content.json tmp.json
+                return 0
+              fi
+            fi
+            return 1
+          }
+
+          ok=0
+          for u in "$URL" "https://r.jina.ai/$URL" "https://api.allorigins.win/raw?url=$ENCODED" "https://api.codetabs.com/v1/proxy?quest=$ENCODED"; do
+            if fetch_url "$u"; then
+              ok=1
+              break
+            fi
+          done
+
+          if [ "$ok" != "1" ]; then
+            echo "All fetches failed"
+            exit 0
+          fi
+
+          jq -c '.' tmp.json > fetched.json
+          if [ ! -f isaeva.json ] || ! cmp -s fetched.json isaeva.json; then
+            mv fetched.json isaeva.json
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add isaeva.json
+            git commit -m "Update Isaeva status"
+            git push
+          fi
