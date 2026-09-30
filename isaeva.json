@@ -1,1 +1,1 @@
-{"success":true,"version":"2.3.7","roblox_version":"version-2366ba214ec740ca","changelog":"[*] Improved Injector\n[!] Fixed trampoline_call\n[!] Fixed an issue in Scheduler"}
+{"success":true,"version":"2.3.8","roblox_version":"version-02c37bc51a384b8f","changelog":"[+] Updated to version-02c37bc51a384b8f\n[+] Added SplitView to Monaco Editor\n[*] Improved Auto Update\n[!] Fixed Background Image on Monaco Editor"}
