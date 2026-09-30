@@ -1,1 +1,1 @@
-{"success":true,"version":"2.3.5","roblox_version":"version-2366ba214ec740ca","changelog":"[*] Improved gethui\n[*] Improved cloneref\n[*] Improved cache.invalidate\n[*] Improved getgc\n[*] Improved Error Messages and Debugging for Injector Problems\n[+] Added JSON-Based Custom Themes for Interface, Editor and Console\n[!] Fixed Cloudflare DNS Detection During Setup"}
+{"success":true,"version":"2.3.7","roblox_version":"version-2366ba214ec740ca","changelog":"[*] Improved Injector\n[!] Fixed trampoline_call\n[!] Fixed an issue in Scheduler"}
